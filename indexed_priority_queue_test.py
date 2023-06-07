@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from heapq import heappush, heappop
 from indexed_priority_queue import IndexedPriorityQueue
 

@@ -1,6 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock
-from random import randrange
+from random import randrange, choice
+from operator import add, sub
 from indexed_priority_queue import IndexedPriorityQueue
 
 
@@ -29,10 +30,26 @@ EXAMPLE_ELEMENTS = (
 )
 
 
-class IndexedPriorityQueueTestCase(TestCase):
+class IndexedPriorityQueueBaseTestCase(TestCase):
     def setUp(self):
         self.queue = IndexedPriorityQueue()
 
+    def assert_invariant(self):
+        heap_size = len(self.queue)
+
+        for root in range(heap_size):
+            left = 2 * root + 1
+            right = 2 * root + 2
+
+            self.assert_child_invariant(heap_size, root, left)
+            self.assert_child_invariant(heap_size, root, right)
+
+    def assert_child_invariant(self, heap_size, root_index, child_index):
+        if child_index < heap_size:
+            self.assertLessEqual(root_index, child_index)
+
+
+class IndexedPriorityQueueTestCase(IndexedPriorityQueueBaseTestCase):
     def test_bool_when_empty(self):
         self.assertFalse(bool(self.queue))
 
@@ -83,32 +100,6 @@ class IndexedPriorityQueueTestCase(TestCase):
     def push_example_values(self):
         for priority, key in EXAMPLE_ELEMENTS:
             self.queue.push(priority, key)
-
-    def test_push_with_random_values(self):
-        self.push_random_values()
-        self.assert_invariant()
-
-    def push_random_values(self):
-        values = set(
-            [randrange(9999) for i in range(randrange(999))]
-        )  # To avoid repeated values
-
-        for value in values:
-            self.queue.push(value, str(value))
-
-    def assert_invariant(self):
-        heap_size = len(self.queue)
-
-        for root in range(heap_size):
-            left = 2 * root + 1
-            right = 2 * root + 2
-
-            self.assert_child_invariant(heap_size, root, left)
-            self.assert_child_invariant(heap_size, root, right)
-
-    def assert_child_invariant(self, heap_size, root_index, child_index):
-        if child_index < heap_size:
-            self.assertLessEqual(root_index, child_index)
 
     def test_pop_when_empty(self):
         with self.assertRaises(IndexError):
@@ -324,3 +315,68 @@ class IndexedPriorityQueueTestCase(TestCase):
         self.assertLess(new_index, middle_index)
 
         self.assert_invariant()
+
+
+class IndexedPriorityQueueRandomTestCase(IndexedPriorityQueueBaseTestCase):
+    RUNS = 10
+
+    @property
+    def operations(self):
+        return [self.push, self.pop, self.delete, self.update]
+
+    def setUp(self):
+        self.queue = IndexedPriorityQueue()
+
+    def test(self):
+        # Runs the random tests multiple times
+        for i in range(IndexedPriorityQueueRandomTestCase.RUNS):
+            self.do_test()
+
+    def do_test(self):
+        """
+        Pushes three quarters of the generated random values. Then runs
+        random operations until all remaining values have been pushed.
+        """
+        values = IndexedPriorityQueueRandomTestCase.generate_random_values()
+
+        three_quarters = values[: len(values) // 4 * 3]
+        remnant_values = values[len(values) // 4 * 3 :]
+
+        self.push_values(three_quarters)
+        self.assert_invariant()
+
+        while remnant_values:
+            operation = choice(self.operations)
+
+            if operation == self.push:
+                self.push(remnant_values)
+            else:
+                operation()
+
+            self.assert_invariant()
+
+    def push(self, remnant_values):
+        value = remnant_values.pop()
+        self.queue.push(value, str(value))
+
+    def pop(self):
+        self.queue.pop()
+
+    def delete(self):
+        key = choice(list(self.queue.key_index.keys()))
+        self.queue.delete(key)
+
+    def update(self):
+        key = choice(list(self.queue.key_index.keys()))
+        priority = self.queue.priority(key)
+        op = choice([add, sub])
+        self.queue.update(key, op(priority, randrange(20)))
+
+    def push_values(self, values):
+        for value in values:
+            self.queue.push(value, str(value))
+
+    @staticmethod
+    def generate_random_values():
+        # As for now, we do not support repeated values
+        return list(set([randrange(9999) for i in range(randrange(999))]))

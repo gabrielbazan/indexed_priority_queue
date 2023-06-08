@@ -22,6 +22,10 @@ class IndexedPriorityQueue:
     def key(self, index):
         return self.index_key[index]
 
+    def priority(self, key):
+        index = self.index(key)
+        return self.queue[index]
+
     def push(self, priority, key):
         self.queue.append(priority)
 
@@ -92,9 +96,6 @@ class IndexedPriorityQueue:
         return priority, key
 
     def update(self, key, new_priority):
-        if not self.exists(key):
-            raise IndexError()
-
         index = self.index(key)
 
         self.queue[index] = new_priority

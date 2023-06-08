@@ -18,11 +18,14 @@ EXAMPLE_ELEMENTS = (
     (4, "Jack"),
     (9, "Marge"),
     (6, "Kim"),
-    (25, "Homer"),
+    (12, "Jim"),
+    (11, "Homer"),
     (EXAMPLE_TOP_PRIORITY, EXAMPLE_TOP_PRIORITY_KEY),
     (2, "Tom"),
     (10, "Nelson"),
     (5, "Max"),
+    (7, "Anna"),
+    (8, "Leo"),
 )
 
 
@@ -208,127 +211,116 @@ class IndexedPriorityQueueTestCase(TestCase):
 
         self.assert_invariant()
 
+    def test_update_when_key_does_not_exist(self):
+        self.push_mocked_element_to_queue()
 
-"""
-q = IndexedPriorityQueue()
+        non_existent_key = Mock()
+        priority_mock = Mock()
 
+        with self.assertRaises(KeyError):
+            self.queue.update(non_existent_key, priority_mock)
 
-q.push(3, "Dan")
-q.push(1, "ALF")
-q.push(4, "Jack")
-q.push(2, "Tom")
-q.push(5, "Max")
+    def test_update_when_lowering_priority_of_root(self):
+        self.push_example_values()
 
+        previous_index = self.queue.index(EXAMPLE_TOP_PRIORITY_KEY)
+        self.assertEquals(previous_index, 0)
 
-print(q.queue)
-print("q.key_index", q.key_index)
-print("q.index_key", q.index_key)
+        self.queue.update(EXAMPLE_TOP_PRIORITY_KEY, EXAMPLE_TOP_PRIORITY + 3)
 
+        # Not the first anymore
+        new_index = self.queue.index(EXAMPLE_TOP_PRIORITY_KEY)
+        self.assertNotEquals(new_index, 0)
 
-pop = q.pop()
-print("pop", pop)
-print("after pop", q.queue)
-print("q.key_index", q.key_index)
-print("q.index_key", q.index_key)
+        self.assert_invariant()
 
-print("Jack exists", q.exists("Jack"))
-print("Jack index", q.index("Jack"))
+    def test_update_when_increasing_priority_of_root(self):
+        self.push_example_values()
 
-q.update("Jack", 0)
-print("after update", q.queue)
-print("q.key_index", q.key_index)
-print("q.index_key", q.index_key)
-print("Jack index", q.index("Jack"))
-"""
+        previous_index = self.queue.index(EXAMPLE_TOP_PRIORITY_KEY)
+        self.assertEquals(previous_index, 0)
 
+        self.queue.update(EXAMPLE_TOP_PRIORITY_KEY, EXAMPLE_TOP_PRIORITY - 2)
 
-"""
-q = IndexedPriorityQueue()
+        # Still the first
+        new_index = self.queue.index(EXAMPLE_TOP_PRIORITY_KEY)
+        self.assertEquals(new_index, 0)
 
-people = [
-    (4, "bob"), 
-    (1, "john"), 
-    (6, "tom"), 
-    (7, "richard"), 
-    (5, "jesus")
-]
+        self.assert_invariant()
 
-test = people[::]
+    def test_update_when_increasing_priority_of_last_leaf(self):
+        self.push_example_values()
 
-for person in people:
-    q.push(person)
+        length = len(self.queue)
+        last_index = length - 1
+        last_key = self.queue.key(last_index)
+        last_priority = self.queue.priority(last_key)
 
-print("before pop", q.queue)
-# print("key_index", q.key_index)
+        self.queue.update(last_key, last_priority - 4)
 
-pop = q.pop()
-print("pop: ", pop)
+        # Not the last anymore
+        new_index = self.queue.index(last_key)
+        self.assertNotEquals(new_index, last_index)
 
-print("after pop", q.queue)
-#print("key_index", q.key_index)
+        self.assert_invariant()
 
+    def test_update_when_lowering_priority_of_last_leaf(self):
+        self.push_example_values()
 
-#print("is tom in queue", q.exists((6, "tom")))
-#print("index of tom in queue", q.index((6, "tom")))
+        length = len(self.queue)
+        last_index = length - 1
+        last_key = self.queue.key(last_index)
+        last_priority = self.queue.priority(last_key)
 
-q.delete((5, "jesus"))
+        self.queue.update(last_key, last_priority + 3)
 
-print("after delete", q.queue)
-"""
+        # Still the last
+        new_index = self.queue.index(last_key)
+        self.assertEquals(new_index, last_index)
 
-"""
-print("----------------")
+        self.assert_invariant()
 
-heapify(test)
-print("test", test)
+    def test_update_when_increasing_priority_of_last_leaf_to_be_the_root(self):
+        self.push_example_values()
 
-pop = heappop(test)
-print("pop: ", pop)
+        length = len(self.queue)
+        last_index = length - 1
+        last_key = self.queue.key(last_index)
 
-print("after pop", test)
-"""
+        self.queue.update(last_key, EXAMPLE_TOP_PRIORITY - 1)
 
-"""
-from random import randrange
+        # The last leaf is now the root
+        new_index = self.queue.index(last_key)
+        self.assertEquals(new_index, 0)
 
+        self.assert_invariant()
 
-def test():
-    values = set(  # To avoid repeated values
-        [randrange(999) for i in range(randrange(9999))]
-    )
+    def test_update_when_lowering_priority_at_the_middle(self):
+        self.push_example_values()
 
-    print("values: ", len(values), values)
+        middle_index = 1  # What's important is that it's not a leaf, nor the root
+        middle_key = self.queue.key(middle_index)
+        middle_priority = self.queue.priority(middle_key)
 
-    print("has repeated elements: ", len(values) != len(set(values)))
+        self.queue.update(middle_key, middle_priority + 10)
 
-    heap = []
-    queue = IndexedPriorityQueue()
+        # It has been pushed downwards
+        new_index = self.queue.index(middle_key)
+        self.assertGreater(new_index, middle_index)
 
-    fill(heap, queue, values)
+        self.assert_invariant()
 
-    pop_all(heap, queue)
+    def test_update_when_increasing_priority_at_the_middle(self):
+        self.push_example_values()
 
+        middle_index = 1  # What's important is that it's not a leaf, nor the root
+        middle_key = self.queue.key(middle_index)
+        middle_priority = self.queue.priority(middle_key)
 
-def fill(heap, queue, values):
-    for value in values:
-        heappush(heap, value)
-        queue.push(value)
-        assert queue.queue == heap
+        self.queue.update(middle_key, middle_priority - 10)
 
+        # It has been pushed upwards
+        new_index = self.queue.index(middle_key)
+        self.assertLess(new_index, middle_index)
 
-def pop_all(heap, queue):
-    while queue or heap:
-        heap_value = heappop(heap)
-        queue_value = queue.pop()
-        assert heap_value == queue_value
-"""
-
-# test()
-
-"""
-heap = []
-heappush(heap, 8)
-print(heap)
-heappush(heap, 8)
-print(heap)
-"""
+        self.assert_invariant()

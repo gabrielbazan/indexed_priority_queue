@@ -58,7 +58,7 @@ class IndexedPriorityQueueTestCase(IndexedPriorityQueueBaseTestCase):
         self.assertTrue(bool(self.queue))
 
     def push_mocked_element_to_queue(self):
-        self.queue.push(PRIORITY_MOCK, KEY_MOCK)
+        self.queue.push(KEY_MOCK, PRIORITY_MOCK)
 
     def test_len_when_empty(self):
         self.assertEquals(len(self.queue), 0)
@@ -99,7 +99,7 @@ class IndexedPriorityQueueTestCase(IndexedPriorityQueueBaseTestCase):
 
     def push_example_values(self):
         for priority, key in EXAMPLE_ELEMENTS:
-            self.queue.push(priority, key)
+            self.queue.push(key, priority)
 
     def test_pop_when_empty(self):
         with self.assertRaises(IndexError):
@@ -318,7 +318,7 @@ class IndexedPriorityQueueTestCase(IndexedPriorityQueueBaseTestCase):
 
 
 class IndexedPriorityQueueRandomTestCase(IndexedPriorityQueueBaseTestCase):
-    RUNS = 10
+    RUNS = 50
 
     @property
     def operations(self):
@@ -357,7 +357,7 @@ class IndexedPriorityQueueRandomTestCase(IndexedPriorityQueueBaseTestCase):
 
     def push(self, remnant_values):
         value = remnant_values.pop()
-        self.queue.push(value, str(value))
+        self.queue.push(f"key_{value}", value)
 
     def pop(self):
         self.queue.pop()
@@ -374,9 +374,9 @@ class IndexedPriorityQueueRandomTestCase(IndexedPriorityQueueBaseTestCase):
 
     def push_values(self, values):
         for value in values:
-            self.queue.push(value, str(value))
+            self.queue.push(f"key_{value}", value)
 
     @staticmethod
     def generate_random_values():
         # As for now, we do not support repeated values
-        return list(set([randrange(9999) for i in range(randrange(999))]))
+        return list(set([randrange(9999) for i in range(randrange(100))]))

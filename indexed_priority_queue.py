@@ -26,7 +26,7 @@ class IndexedPriorityQueue:
         index = self.index(key)
         return self.queue[index]
 
-    def push(self, priority, key):
+    def push(self, key, priority):
         self.queue.append(priority)
 
         index = len(self.queue) - 1

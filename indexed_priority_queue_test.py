@@ -1,6 +1,6 @@
 from unittest import TestCase
 from unittest.mock import Mock
-from heapq import heappush, heappop
+from random import randrange
 from indexed_priority_queue import IndexedPriorityQueue
 
 
@@ -10,12 +10,18 @@ PRIORITY_MOCK = Mock()
 KEY_MOCK = Mock()
 
 
+EXAMPLE_TOP_PRIORITY = 1
+EXAMPLE_TOP_PRIORITY_KEY = "Lara"
+
 EXAMPLE_ELEMENTS = (
     (3, "Dan"),
-    (1, "Lara"),
     (4, "Jack"),
+    (9, "Marge"),
     (6, "Kim"),
+    (25, "Homer"),
+    (EXAMPLE_TOP_PRIORITY, EXAMPLE_TOP_PRIORITY_KEY),
     (2, "Tom"),
+    (10, "Nelson"),
     (5, "Max"),
 )
 
@@ -28,18 +34,36 @@ class IndexedPriorityQueueTestCase(TestCase):
         self.assertFalse(bool(self.queue))
 
     def test_bool_when_not_empty(self):
-        self.queue.push(PRIORITY_MOCK, KEY_MOCK)
+        self.push_mocked_element_to_queue()
         self.assertTrue(bool(self.queue))
+
+    def push_mocked_element_to_queue(self):
+        self.queue.push(PRIORITY_MOCK, KEY_MOCK)
 
     def test_len_when_empty(self):
         self.assertEquals(len(self.queue), 0)
 
     def test_len_when_not_empty(self):
-        self.queue.push(PRIORITY_MOCK, KEY_MOCK)
+        self.push_mocked_element_to_queue()
         self.assertEquals(len(self.queue), 1)
 
+    def test_contains_when_not_contained(self):
+        self.assertFalse(KEY_MOCK in self.queue)
+
+    def test_contains_when_contained(self):
+        self.push_mocked_element_to_queue()
+        self.assertTrue(KEY_MOCK in self.queue)
+
+    def test_index_when_index_does_not_exists(self):
+        with self.assertRaises(KeyError):
+            self.queue.index(KEY_MOCK)
+
+    def test_index_when_index_exists(self):
+        self.push_mocked_element_to_queue()
+        self.assertEquals(self.queue.index(KEY_MOCK), LEFTMOST_INDEX)
+
     def test_push_when_empty(self):
-        self.queue.push(PRIORITY_MOCK, KEY_MOCK)
+        self.push_mocked_element_to_queue()
 
         self.assertEquals(self.queue.queue, [PRIORITY_MOCK])
 
@@ -50,12 +74,24 @@ class IndexedPriorityQueueTestCase(TestCase):
         self.assertEquals(self.queue.index_key[LEFTMOST_INDEX], KEY_MOCK)
 
     def test_push_with_examples(self):
-        self.populate_with_examples()
+        self.push_example_values()
         self.assert_invariant()
 
-    def populate_with_examples(self):
+    def push_example_values(self):
         for priority, key in EXAMPLE_ELEMENTS:
             self.queue.push(priority, key)
+
+    def test_push_with_random_values(self):
+        self.push_random_values()
+        self.assert_invariant()
+
+    def push_random_values(self):
+        values = set(
+            [randrange(9999) for i in range(randrange(999))]
+        )  # To avoid repeated values
+
+        for value in values:
+            self.queue.push(value, str(value))
 
     def assert_invariant(self):
         heap_size = len(self.queue)
@@ -71,10 +107,112 @@ class IndexedPriorityQueueTestCase(TestCase):
         if child_index < heap_size:
             self.assertLessEqual(root_index, child_index)
 
+    def test_pop_when_empty(self):
+        with self.assertRaises(IndexError):
+            self.queue.pop()
+        self.assert_invariant()
 
-q = IndexedPriorityQueue()
+    def test_pop_when_queue_has_only_one_element(self):
+        self.push_mocked_element_to_queue()
+
+        popped_priority, popped_key = self.queue.pop()
+
+        self.assertIs(popped_priority, PRIORITY_MOCK)
+        self.assertIs(popped_key, KEY_MOCK)
+
+        self.assertEquals(len(self.queue), 0)
+        self.assertEquals(len(self.queue.key_index), 0)
+        self.assertEquals(len(self.queue.index_key), 0)
+
+        self.assert_invariant()
+
+    def test_pop_when_queue_has_multiple_elements(self):
+        self.push_example_values()
+
+        previous_length = len(self.queue)
+        last_element_index = previous_length - 1
+
+        popped_priority, popped_key = self.queue.pop()
+
+        self.assertIs(popped_priority, EXAMPLE_TOP_PRIORITY)
+        self.assertIs(popped_key, EXAMPLE_TOP_PRIORITY_KEY)
+
+        self.assertEquals(len(self.queue), previous_length - 1)
+
+        self.assertNotIn(popped_key, self.queue.key_index)
+        self.assertNotIn(last_element_index, self.queue.index_key)
+
+        self.assert_invariant()
+
+    def test_delete_when_empty(self):
+        with self.assertRaises(KeyError):
+            self.queue.delete(KEY_MOCK)
+
+    def test_delete_when_key_does_not_exist(self):
+        self.push_mocked_element_to_queue()
+        non_existent_key = Mock()
+
+        with self.assertRaises(KeyError):
+            self.queue.delete(non_existent_key)
+
+    def test_delete_when_it_has_only_one_element(self):
+        self.push_mocked_element_to_queue()
+
+        priority, key = self.queue.delete(KEY_MOCK)
+
+        self.assertIs(priority, PRIORITY_MOCK)
+        self.assertIs(key, KEY_MOCK)
+
+        self.assertEquals(len(self.queue), 0)
+        self.assertEquals(len(self.queue.key_index), 0)
+        self.assertEquals(len(self.queue.index_key), 0)
+
+    def test_delete_from_the_middle(self):
+        self.push_example_values()
+
+        length = len(self.queue)
+        last_index = length - 1
+        middle_index = length // 2
+        middle_priority = self.queue.queue[middle_index]
+        middle_key = self.queue.key(middle_index)
+
+        deleted_priority, deleted_key = self.queue.delete(middle_key)
+
+        self.assertIs(deleted_priority, middle_priority)
+        self.assertIs(deleted_key, middle_key)
+
+        self.assertEquals(len(self.queue), length - 1)
+
+        self.assertNotIn(middle_key, self.queue.key_index)
+        self.assertNotIn(last_index, self.queue.index_key)
+
+        self.assert_invariant()
+
+    def test_delete_last_element(self):
+        self.push_example_values()
+
+        length = len(self.queue)
+        last_index = length - 1
+        last_priority = self.queue.queue[last_index]
+        last_key = self.queue.key(last_index)
+
+        deleted_priority, deleted_key = self.queue.delete(last_key)
+
+        self.assertIs(deleted_priority, last_priority)
+        self.assertIs(deleted_key, last_key)
+
+        self.assertEquals(len(self.queue), length - 1)
+
+        self.assertNotIn(last_key, self.queue.key_index)
+        self.assertNotIn(last_index, self.queue.index_key)
+
+        self.assert_invariant()
+
 
 """
+q = IndexedPriorityQueue()
+
+
 q.push(3, "Dan")
 q.push(1, "ALF")
 q.push(4, "Jack")
@@ -150,6 +288,7 @@ print("pop: ", pop)
 print("after pop", test)
 """
 
+"""
 from random import randrange
 
 
@@ -182,7 +321,7 @@ def pop_all(heap, queue):
         heap_value = heappop(heap)
         queue_value = queue.pop()
         assert heap_value == queue_value
-
+"""
 
 # test()
 

@@ -13,6 +13,15 @@ class IndexedPriorityQueue:
     def __len__(self):
         return len(self.queue)
 
+    def __contains__(self, key):
+        return key in self.key_index
+
+    def index(self, key):
+        return self.key_index[key]
+
+    def key(self, index):
+        return self.index_key[index]
+
     def push(self, priority, key):
         self.queue.append(priority)
 
@@ -57,25 +66,30 @@ class IndexedPriorityQueue:
 
             return priority, key
 
-    def exists(self, key):
-        return key in self.key_index
-
-    def index(self, key):
-        return self.key_index.get(key)
-
     def delete(self, key):
-        if not self.exists(key):
-            raise IndexError()
-
         index = self.index(key)
 
-        last_item = self.queue.pop()
+        if len(self.queue) == 1:
+            return self.pop()
 
-        self.queue[index] = last_item
+        priority = self.queue[index]
 
-        # update mappings
+        last_index = len(self.queue) - 1
+        last_key = self.index_key[last_index]
+        last_priority = self.queue.pop()
 
-        self._maintain_invariant(index)
+        del self.key_index[key]
+        del self.index_key[last_index]
+
+        if index != last_index:
+            self.queue[index] = last_priority
+
+            self.key_index[last_key] = index
+            self.index_key[index] = last_key
+
+            self._maintain_invariant(index)
+
+        return priority, key
 
     def update(self, key, new_priority):
         if not self.exists(key):

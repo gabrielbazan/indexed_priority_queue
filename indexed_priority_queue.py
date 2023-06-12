@@ -1,6 +1,3 @@
-# At first, do not support repeated values
-
-
 class IndexedPriorityQueue:
     def __init__(self):
         self.queue = []
@@ -27,6 +24,9 @@ class IndexedPriorityQueue:
         return self.queue[index]
 
     def push(self, key, priority):
+        if key in self.key_index:
+            raise KeyError("Key already exists")
+
         self.queue.append(priority)
 
         index = len(self.queue) - 1
@@ -54,17 +54,19 @@ class IndexedPriorityQueue:
         if len(self.queue) > 1:
             index = 0
             key = self.index_key[index]
-
-            priority = self.queue[0]
+            priority = self.queue[index]
 
             last_index = len(self.queue) - 1
+            last_key = self.index_key[last_index]
             last_priority = self.queue.pop()
 
-            self.queue[0] = last_priority
+            self.queue[index] = last_priority
 
             del self.key_index[key]
-            self.index_key[0] = self.index_key[last_index]
             del self.index_key[last_index]
+
+            self.index_key[index] = last_key
+            self.key_index[last_key] = index
 
             self._maintain_invariant(0)
 

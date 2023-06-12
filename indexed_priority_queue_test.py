@@ -2,6 +2,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 from random import randrange, choice
 from operator import add, sub
+from collections import defaultdict
 from indexed_priority_queue import IndexedPriorityQueue
 
 
@@ -19,11 +20,13 @@ EXAMPLE_ELEMENTS = (
     (4, "Jack"),
     (9, "Marge"),
     (6, "Kim"),
+    (2, "Peter"),
     (12, "Jim"),
     (11, "Homer"),
     (EXAMPLE_TOP_PRIORITY, EXAMPLE_TOP_PRIORITY_KEY),
     (2, "Tom"),
     (10, "Nelson"),
+    (3, "Justin"),
     (5, "Max"),
     (7, "Anna"),
     (8, "Leo"),
@@ -82,6 +85,17 @@ class IndexedPriorityQueueTestCase(IndexedPriorityQueueBaseTestCase):
         self.push_mocked_element_to_queue()
         self.assertEquals(self.queue.index(KEY_MOCK), LEFTMOST_INDEX)
 
+    def test_priority_when_key_does_not_exist(self):
+        with self.assertRaises(KeyError):
+            self.queue.priority(KEY_MOCK)
+
+    def test_priority_when_key_exists(self):
+        self.push_mocked_element_to_queue()
+
+        returned_priority = self.queue.priority(KEY_MOCK)
+
+        self.assertIs(returned_priority, PRIORITY_MOCK)
+
     def test_push_when_empty(self):
         self.push_mocked_element_to_queue()
 
@@ -95,11 +109,22 @@ class IndexedPriorityQueueTestCase(IndexedPriorityQueueBaseTestCase):
 
     def test_push_with_examples(self):
         self.push_example_values()
+
+        self.assertEqual(len(self.queue), len(EXAMPLE_ELEMENTS))
+        self.assertEqual(len(self.queue.index_key), len(EXAMPLE_ELEMENTS))
+        self.assertEqual(len(self.queue.key_index), len(EXAMPLE_ELEMENTS))
+
         self.assert_invariant()
 
     def push_example_values(self):
         for priority, key in EXAMPLE_ELEMENTS:
             self.queue.push(key, priority)
+
+    def test_push_with_duplicated_keys(self):
+        self.push_mocked_element_to_queue()
+
+        with self.assertRaises(KeyError):
+            self.push_mocked_element_to_queue()
 
     def test_pop_when_empty(self):
         with self.assertRaises(IndexError):
@@ -330,6 +355,7 @@ class IndexedPriorityQueueRandomTestCase(IndexedPriorityQueueBaseTestCase):
     def test(self):
         # Runs the random tests multiple times
         for i in range(IndexedPriorityQueueRandomTestCase.RUNS):
+            self.setUp()
             self.do_test()
 
     def do_test(self):
@@ -337,27 +363,29 @@ class IndexedPriorityQueueRandomTestCase(IndexedPriorityQueueBaseTestCase):
         Pushes three quarters of the generated random values. Then runs
         random operations until all remaining values have been pushed.
         """
-        values = IndexedPriorityQueueRandomTestCase.generate_random_values()
+        elements = IndexedPriorityQueueRandomTestCase.generate_random_elements()
 
-        three_quarters = values[: len(values) // 4 * 3]
-        remnant_values = values[len(values) // 4 * 3 :]
+        half = len(elements) // 2
 
-        self.push_values(three_quarters)
+        left_half = elements[:half]
+        right_half = elements[half:]
+
+        self.push_elements(left_half)
         self.assert_invariant()
 
-        while remnant_values:
+        while right_half and self.queue:
             operation = choice(self.operations)
 
             if operation == self.push:
-                self.push(remnant_values)
+                self.push(right_half)
             else:
                 operation()
 
             self.assert_invariant()
 
     def push(self, remnant_values):
-        value = remnant_values.pop()
-        self.queue.push(f"key_{value}", value)
+        key, priority = remnant_values.pop()
+        self.queue.push(key, priority)
 
     def pop(self):
         self.queue.pop()
@@ -372,11 +400,22 @@ class IndexedPriorityQueueRandomTestCase(IndexedPriorityQueueBaseTestCase):
         op = choice([add, sub])
         self.queue.update(key, op(priority, randrange(20)))
 
-    def push_values(self, values):
-        for value in values:
-            self.queue.push(f"key_{value}", value)
+    def push_elements(self, elements):
+        for key, priority in elements:
+            self.queue.push(key, priority)
 
     @staticmethod
-    def generate_random_values():
-        # As for now, we do not support repeated values
-        return list(set([randrange(9999) for i in range(randrange(100))]))
+    def generate_random_elements():
+        # Keys must be unique; different keys may have the same priority
+        elements = {}
+
+        priorities = [randrange(70) for i in range(randrange(200))]
+
+        counts = defaultdict(lambda: 0)
+
+        for priority in priorities:
+            key = f"key_{priority}_{counts[priority]}"
+            elements[key] = priority
+            counts[priority] += 1
+
+        return list(elements.items())

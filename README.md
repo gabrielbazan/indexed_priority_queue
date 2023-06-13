@@ -2,6 +2,15 @@
 
 A Python implementation of an Indexed Priority Queue (IPQ).
 
+<p align="center">
+    <a href="https://github.com/gabrielbazan/indexed_priority_queue/actions"><img alt="Test Workflow Status" src="https://github.com/gabrielbazan/indexed_priority_queue/workflows/Test/badge.svg"></a>
+    <a href="https://github.com/gabrielbazan/indexed_priority_queue/actions"><img alt="Linting Workflow Status" src="https://github.com/gabrielbazan/indexed_priority_queue/workflows/Lint/badge.svg"></a>
+    <a href="https://github.com/gabrielbazan/indexed_priority_queue/actions"><img alt="PyPI Publication Workflow Status" src="https://github.com/gabrielbazan/indexed_priority_queue/workflows/Publish%20to%20PyPI/badge.svg"></a>
+    <a href="https://coveralls.io/github/gabrielbazan/indexed_priority_queue?branch=main"><img alt="Coverage Status" src="https://coveralls.io/repos/github/gabrielbazan/indexed_priority_queue/badge.svg?branch=main"></a>
+    <a href="https://pypi.org/project/indexed_priority_queue/"><img alt="PyPI" src="https://img.shields.io/pypi/v/indexed_priority_queue"></a>
+    <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</p>
+
 ## Time and space complexities
 
 It is implemented as minimum binary heap. For indexing, it uses two additional dicts. So, in terms of memory space, it uses _O(3 \* n) -> O(n)_ space.

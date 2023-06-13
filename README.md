@@ -2,7 +2,9 @@
 
 A Python implementation of an Indexed Priority Queue (IPQ).
 
-It is implemented as minimum binary heap. For indexing, it uses two additional dicts. So, in terms of memory space, it uses _O(3 \* n) -> O(n)_.
+## Time and space complexities
+
+It is implemented as minimum binary heap. For indexing, it uses two additional dicts. So, in terms of memory space, it uses _O(3 \* n) -> O(n)_ space.
 
 This data structure has the following time complexities:
 
@@ -18,3 +20,9 @@ This data structure has the following time complexities:
 | `__bool__ -> bool`             | Determine if the queue is empty or not. Equivalent to _is_empty()_  | O(1)            |
 | `__len__ -> int`               | Returns the count of elements in the queue                          | O(1)            |
 | `__contains(key)__ -> bool`    | Determine if the given key exists in the queue                      | O(1)            |
+
+Where:
+
+    1. `key` is a `typing.Hashable`
+    2. `priority` is a `numbers.Number`
+    3. `index` is an `int`

@@ -23,6 +23,6 @@ This data structure has the following time complexities:
 
 Where:
 
-    1. `key` is a `typing.Hashable`
-    2. `priority` is a `numbers.Number`
-    3. `index` is an `int`
+1. `key` is a `typing.Hashable`
+2. `priority` is a `numbers.Number`
+3. `index` is an `int`

@@ -61,9 +61,9 @@ index = queue.index("Kim")  # 0
 key = queue.key(0)  # Kim
 priority = queue.priority("Kim")  # 2
 
-# It's not empty
+# Not empty, 2
 if queue:
-    print("Not empty")
+    print(f"Not empty, {len(queue)}")
 else:
     print("Empty")
 

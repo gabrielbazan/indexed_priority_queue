@@ -50,7 +50,9 @@ key, priority = queue.peek()  # Kim, 2
 queue.update("Peter", 1)
 key, priority = queue.peek()  # Peter, 1
 
+assert len(queue) == 4  # True
 key, priority = queue.delete("John")  # John, 7
+assert len(queue) == 3  # True
 
 key, priority = queue.pop()  # Peter, 1
 
@@ -64,8 +66,6 @@ if queue:
     print("Not empty")
 else:
     print("Empty")
-
-assert len(queue) == 3  # True
 
 # Max is not in the queue
 if "Max" in queue:

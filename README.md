@@ -74,5 +74,5 @@ else:
     print("Max is not in the queue")
 ```
 
-- `push` raises `KeyError` if the key is in the queue.
-- `pop` raises `IndexError` if the queue is empty.
+- `push`, raises `KeyError` if the key is already in the queue.
+- `pop` and `peek` raise `IndexError` if the queue is empty.

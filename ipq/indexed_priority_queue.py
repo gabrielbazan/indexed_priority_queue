@@ -1,29 +1,33 @@
+from numbers import Number
+from typing import Dict, Hashable, List, Tuple
+
+
 class IndexedPriorityQueue:
     def __init__(self):
-        self.queue = []
-        self.key_index = {}  # key -> index in heap
-        self.index_key = {}  # index in heap -> key
+        self.queue: List[Number] = []
+        self.key_index: Dict[Hashable, int] = {}  # key -> index in heap
+        self.index_key: Dict[int, Hashable] = {}  # index in heap -> key
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self.queue)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.queue)
 
-    def __contains__(self, key):
+    def __contains__(self, key: Hashable) -> bool:
         return key in self.key_index
 
-    def index(self, key):
+    def index(self, key: Hashable) -> int:
         return self.key_index[key]
 
-    def key(self, index):
+    def key(self, index: int) -> Hashable:
         return self.index_key[index]
 
-    def priority(self, key):
+    def priority(self, key: Hashable) -> Number:
         index = self.index(key)
         return self.queue[index]
 
-    def push(self, key, priority):
+    def push(self, key: Hashable, priority: Number) -> None:
         if key in self.key_index:
             raise KeyError("Key already exists")
 
@@ -36,7 +40,7 @@ class IndexedPriorityQueue:
 
         self._maintain_invariant(index)
 
-    def pop(self):
+    def pop(self) -> Tuple[Hashable, Number]:
         if len(self.queue) == 0:
             raise IndexError()
 
@@ -49,7 +53,7 @@ class IndexedPriorityQueue:
             del self.index_key[index]
             del self.key_index[key]
 
-            return priority, key
+            return key, priority
 
         if len(self.queue) > 1:
             index = 0
@@ -70,9 +74,9 @@ class IndexedPriorityQueue:
 
             self._maintain_invariant(0)
 
-            return priority, key
+            return key, priority
 
-    def delete(self, key):
+    def delete(self, key: Hashable) -> Tuple[Hashable, Number]:
         index = self.index(key)
 
         if len(self.queue) == 1:
@@ -95,27 +99,27 @@ class IndexedPriorityQueue:
 
             self._maintain_invariant(index)
 
-        return priority, key
+        return key, priority
 
-    def update(self, key, new_priority):
+    def update(self, key: Hashable, new_priority: Number) -> None:
         index = self.index(key)
 
         self.queue[index] = new_priority
 
         self._maintain_invariant(index)
 
-    def _maintain_invariant(self, index):
+    def _maintain_invariant(self, index: int) -> None:
         self._bubble_down(index)
         self._bubble_up(index)
 
-    def _bubble_up(self, index):
+    def _bubble_up(self, index) -> None:
         parent_index = (index - 1) // 2
 
         if index > 0 and self.queue[parent_index] > self.queue[index]:
             self._swap(index, parent_index)
             self._bubble_up(parent_index)
 
-    def _swap(self, index_a, index_b):
+    def _swap(self, index_a: int, index_b: int) -> None:
         key_a = self.index_key[index_a]
         key_b = self.index_key[index_b]
 
@@ -129,7 +133,7 @@ class IndexedPriorityQueue:
         self.key_index[key_a], self.key_index[key_b] = index_b, index_a
         self.index_key[index_a], self.index_key[index_b] = key_b, key_a
 
-    def _bubble_down(self, index):
+    def _bubble_down(self, index: int) -> None:
         left_child_index = index * 2 + 1
 
         if (

@@ -1,8 +1,8 @@
 from unittest.mock import Mock
+
 from ipq.tests.base_indexed_priority_queue_test_case import (
     BaseIndexedPriorityQueueTestCase,
 )
-
 
 LEFTMOST_INDEX = 0
 
@@ -113,7 +113,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
     def test_pop_when_queue_has_only_one_element(self):
         self.push_mocked_element_to_queue()
 
-        popped_priority, popped_key = self.queue.pop()
+        popped_key, popped_priority = self.queue.pop()
 
         self.assertIs(popped_priority, PRIORITY_MOCK)
         self.assertIs(popped_key, KEY_MOCK)
@@ -130,7 +130,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         previous_length = len(self.queue)
         last_element_index = previous_length - 1
 
-        popped_priority, popped_key = self.queue.pop()
+        popped_key, popped_priority = self.queue.pop()
 
         self.assertIs(popped_priority, EXAMPLE_TOP_PRIORITY)
         self.assertIs(popped_key, EXAMPLE_TOP_PRIORITY_KEY)
@@ -156,7 +156,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
     def test_delete_when_it_has_only_one_element(self):
         self.push_mocked_element_to_queue()
 
-        priority, key = self.queue.delete(KEY_MOCK)
+        key, priority = self.queue.delete(KEY_MOCK)
 
         self.assertIs(priority, PRIORITY_MOCK)
         self.assertIs(key, KEY_MOCK)
@@ -174,7 +174,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         middle_priority = self.queue.queue[middle_index]
         middle_key = self.queue.key(middle_index)
 
-        deleted_priority, deleted_key = self.queue.delete(middle_key)
+        deleted_key, deleted_priority = self.queue.delete(middle_key)
 
         self.assertIs(deleted_priority, middle_priority)
         self.assertIs(deleted_key, middle_key)
@@ -194,7 +194,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         last_priority = self.queue.queue[last_index]
         last_key = self.queue.key(last_index)
 
-        deleted_priority, deleted_key = self.queue.delete(last_key)
+        deleted_key, deleted_priority = self.queue.delete(last_key)
 
         self.assertIs(deleted_priority, last_priority)
         self.assertIs(deleted_key, last_key)

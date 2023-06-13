@@ -1,1 +1,1 @@
-from ipq import IndexedPriorityQueue  # noqa: F401
+from .ipq import IndexedPriorityQueue  # noqa: F401

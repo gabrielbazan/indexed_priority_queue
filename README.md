@@ -89,3 +89,13 @@ else:
 - `pop` and `peek` raise `IndexError` if the queue is empty.
 - `delete`, `update`, `index` and `priority` raise `KeyError` if the key is not in the queue.
 - `key` raises `KeyError` if the given index does not exist.
+
+
+## Use any hashable object as key
+
+You can use any `typing.Hashable` object as key, not just strings. For example:
+
+```python
+queue.push(frozenset(["a", "b"]), 1)
+queue.push((1, 2, 3), 2)
+```

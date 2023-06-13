@@ -319,3 +319,57 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.assertLess(new_index, middle_index)
 
         self.assert_invariant()
+
+    def test_example(self):
+        self.queue.push("John", 7)
+        self.queue.push("Maria", 3)
+        self.queue.push("Peter", 5)
+
+        key, priority = self.queue.peek()
+        self.assertEquals(key, "Maria")
+        self.assertEquals(priority, 3)
+
+        self.queue.push("Kim", 2)
+        key, priority = self.queue.peek()
+        self.assertEquals(key, "Kim")
+        self.assertEquals(priority, 2)
+
+        self.queue.update("Peter", 1)
+        key, priority = self.queue.peek()
+        self.assertEquals(key, "Peter")
+        self.assertEquals(priority, 1)
+
+        self.assertEquals(len(self.queue), 4)
+        key, priority = self.queue.delete("John")
+        self.assertEquals(key, "John")
+        self.assertEquals(priority, 7)
+        self.assertEquals(len(self.queue), 3)
+
+        key, priority = self.queue.pop()
+        self.assertEquals(key, "Peter")
+        self.assertEquals(priority, 1)
+
+        key, priority = self.queue.peek()
+        self.assertEquals(key, "Kim")
+        self.assertEquals(priority, 2)
+        self.assertEquals(self.queue.index("Kim"), 0)
+        self.assertEquals(self.queue.key(0), "Kim")
+        self.assertEquals(self.queue.priority("Kim"), 2)
+
+        self.assertTrue(bool(self.queue))
+
+        self.assertFalse("Max" in self.queue)
+        self.assertTrue("Maria" in self.queue)
+
+    def test_with_hashable_objects(self):
+        objects = (frozenset(["a", 1, 5.4]), (1, 2), "abc")
+
+        for obj in objects:
+            self.queue.push(obj, 1)
+
+    def test_with_non_hashable_objects(self):
+        objects = (["a", "b"], {"a": "b"}, {"a", "b"})
+
+        for obj in objects:
+            with self.assertRaises(TypeError):
+                self.queue.push(obj, 1)

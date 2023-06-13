@@ -2,6 +2,8 @@
 
 A Python implementation of an Indexed Priority Queue (IPQ).
 
+An IPQ is like any regular priority queue. But it supports quick lookups, updates and deletions...on the fly.
+
 <p align="center">
     <a href="https://github.com/gabrielbazan/indexed_priority_queue/actions"><img alt="Test Workflow Status" src="https://github.com/gabrielbazan/indexed_priority_queue/workflows/Test/badge.svg"></a>
     <a href="https://github.com/gabrielbazan/indexed_priority_queue/actions"><img alt="Linting Workflow Status" src="https://github.com/gabrielbazan/indexed_priority_queue/workflows/Lint/badge.svg"></a>

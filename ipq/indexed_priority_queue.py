@@ -27,6 +27,12 @@ class IndexedPriorityQueue:
         index = self.index(key)
         return self.queue[index]
 
+    def peek(self) -> Tuple[Hashable, Number]:
+        if len(self.queue) == 0:
+            raise IndexError()
+
+        return self.key(0), self.queue[0]
+
     def push(self, key: Hashable, priority: Number) -> None:
         if key in self.key_index:
             raise KeyError("Key already exists")

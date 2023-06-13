@@ -6,7 +6,7 @@
   "python.testing.unittestArgs": [
     "-v",
     "-s",
-    "./ipq",
+    "./indexed_priority_queue",
     "-p",
     "*_test.py"
   ],

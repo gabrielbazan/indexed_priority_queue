@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from ipq.tests.base_indexed_priority_queue_test_case import (
+from indexed_priority_queue.tests.base_indexed_priority_queue_test_case import (
     BaseIndexedPriorityQueueTestCase,
 )
 

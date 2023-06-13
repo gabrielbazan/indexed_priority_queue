@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from ipq.indexed_priority_queue import IndexedPriorityQueue
+from indexed_priority_queue.ipq import IndexedPriorityQueue
 
 
 class BaseIndexedPriorityQueueTestCase(TestCase):

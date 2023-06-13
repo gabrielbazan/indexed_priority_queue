@@ -2,8 +2,7 @@ from collections import defaultdict
 from operator import add, sub
 from random import choice, randrange
 
-from ipq.indexed_priority_queue import IndexedPriorityQueue
-from ipq.tests.base_indexed_priority_queue_test_case import (
+from indexed_priority_queue.tests.base_indexed_priority_queue_test_case import (
     BaseIndexedPriorityQueueTestCase,
 )
 
@@ -14,9 +13,6 @@ class RandomIndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
     @property
     def operations(self):
         return [self.push, self.pop, self.delete, self.update]
-
-    def setUp(self):
-        self.queue = IndexedPriorityQueue()
 
     def test(self):
         # Runs the random tests multiple times
@@ -75,7 +71,7 @@ class RandomIndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         # Keys must be unique; different keys may have the same priority
         elements = {}
 
-        priorities = [randrange(70) for i in range(randrange(200))]
+        priorities = [randrange(70) for i in range(randrange(300))]
 
         counts = defaultdict(lambda: 0)
 

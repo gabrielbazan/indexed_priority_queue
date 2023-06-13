@@ -43,11 +43,11 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.queue.push(KEY_MOCK, PRIORITY_MOCK)
 
     def test_len_when_empty(self):
-        self.assertEquals(len(self.queue), 0)
+        self.assertEqual(len(self.queue), 0)
 
     def test_len_when_not_empty(self):
         self.push_mocked_element_to_queue()
-        self.assertEquals(len(self.queue), 1)
+        self.assertEqual(len(self.queue), 1)
 
     def test_contains_when_not_contained(self):
         self.assertFalse(KEY_MOCK in self.queue)
@@ -62,7 +62,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
 
     def test_index_when_index_exists(self):
         self.push_mocked_element_to_queue()
-        self.assertEquals(self.queue.index(KEY_MOCK), LEFTMOST_INDEX)
+        self.assertEqual(self.queue.index(KEY_MOCK), LEFTMOST_INDEX)
 
     def test_priority_when_key_does_not_exist(self):
         with self.assertRaises(KeyError):
@@ -78,13 +78,13 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
     def test_push_when_empty(self):
         self.push_mocked_element_to_queue()
 
-        self.assertEquals(self.queue.queue, [PRIORITY_MOCK])
+        self.assertEqual(self.queue.queue, [PRIORITY_MOCK])
 
         self.assertIn(KEY_MOCK, self.queue.key_index)
-        self.assertEquals(self.queue.key_index[KEY_MOCK], LEFTMOST_INDEX)
+        self.assertEqual(self.queue.key_index[KEY_MOCK], LEFTMOST_INDEX)
 
         self.assertIn(LEFTMOST_INDEX, self.queue.index_key)
-        self.assertEquals(self.queue.index_key[LEFTMOST_INDEX], KEY_MOCK)
+        self.assertEqual(self.queue.index_key[LEFTMOST_INDEX], KEY_MOCK)
 
     def test_push_with_examples(self):
         self.push_example_values()
@@ -118,9 +118,9 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.assertIs(popped_priority, PRIORITY_MOCK)
         self.assertIs(popped_key, KEY_MOCK)
 
-        self.assertEquals(len(self.queue), 0)
-        self.assertEquals(len(self.queue.key_index), 0)
-        self.assertEquals(len(self.queue.index_key), 0)
+        self.assertEqual(len(self.queue), 0)
+        self.assertEqual(len(self.queue.key_index), 0)
+        self.assertEqual(len(self.queue.index_key), 0)
 
         self.assert_invariant()
 
@@ -135,7 +135,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.assertIs(popped_priority, EXAMPLE_TOP_PRIORITY)
         self.assertIs(popped_key, EXAMPLE_TOP_PRIORITY_KEY)
 
-        self.assertEquals(len(self.queue), previous_length - 1)
+        self.assertEqual(len(self.queue), previous_length - 1)
 
         self.assertNotIn(popped_key, self.queue.key_index)
         self.assertNotIn(last_element_index, self.queue.index_key)
@@ -161,9 +161,9 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.assertIs(priority, PRIORITY_MOCK)
         self.assertIs(key, KEY_MOCK)
 
-        self.assertEquals(len(self.queue), 0)
-        self.assertEquals(len(self.queue.key_index), 0)
-        self.assertEquals(len(self.queue.index_key), 0)
+        self.assertEqual(len(self.queue), 0)
+        self.assertEqual(len(self.queue.key_index), 0)
+        self.assertEqual(len(self.queue.index_key), 0)
 
     def test_delete_from_the_middle(self):
         self.push_example_values()
@@ -179,7 +179,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.assertIs(deleted_priority, middle_priority)
         self.assertIs(deleted_key, middle_key)
 
-        self.assertEquals(len(self.queue), length - 1)
+        self.assertEqual(len(self.queue), length - 1)
 
         self.assertNotIn(middle_key, self.queue.key_index)
         self.assertNotIn(last_index, self.queue.index_key)
@@ -199,7 +199,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.assertIs(deleted_priority, last_priority)
         self.assertIs(deleted_key, last_key)
 
-        self.assertEquals(len(self.queue), length - 1)
+        self.assertEqual(len(self.queue), length - 1)
 
         self.assertNotIn(last_key, self.queue.key_index)
         self.assertNotIn(last_index, self.queue.index_key)
@@ -219,13 +219,13 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.push_example_values()
 
         previous_index = self.queue.index(EXAMPLE_TOP_PRIORITY_KEY)
-        self.assertEquals(previous_index, 0)
+        self.assertEqual(previous_index, 0)
 
         self.queue.update(EXAMPLE_TOP_PRIORITY_KEY, EXAMPLE_TOP_PRIORITY + 3)
 
         # Not the first anymore
         new_index = self.queue.index(EXAMPLE_TOP_PRIORITY_KEY)
-        self.assertNotEquals(new_index, 0)
+        self.assertNotEqual(new_index, 0)
 
         self.assert_invariant()
 
@@ -233,13 +233,13 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.push_example_values()
 
         previous_index = self.queue.index(EXAMPLE_TOP_PRIORITY_KEY)
-        self.assertEquals(previous_index, 0)
+        self.assertEqual(previous_index, 0)
 
         self.queue.update(EXAMPLE_TOP_PRIORITY_KEY, EXAMPLE_TOP_PRIORITY - 2)
 
         # Still the first
         new_index = self.queue.index(EXAMPLE_TOP_PRIORITY_KEY)
-        self.assertEquals(new_index, 0)
+        self.assertEqual(new_index, 0)
 
         self.assert_invariant()
 
@@ -255,7 +255,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
 
         # Not the last anymore
         new_index = self.queue.index(last_key)
-        self.assertNotEquals(new_index, last_index)
+        self.assertNotEqual(new_index, last_index)
 
         self.assert_invariant()
 
@@ -271,7 +271,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
 
         # Still the last
         new_index = self.queue.index(last_key)
-        self.assertEquals(new_index, last_index)
+        self.assertEqual(new_index, last_index)
 
         self.assert_invariant()
 
@@ -286,7 +286,7 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
 
         # The last leaf is now the root
         new_index = self.queue.index(last_key)
-        self.assertEquals(new_index, 0)
+        self.assertEqual(new_index, 0)
 
         self.assert_invariant()
 
@@ -326,35 +326,35 @@ class IndexedPriorityQueueTestCase(BaseIndexedPriorityQueueTestCase):
         self.queue.push("Peter", 5)
 
         key, priority = self.queue.peek()
-        self.assertEquals(key, "Maria")
-        self.assertEquals(priority, 3)
+        self.assertEqual(key, "Maria")
+        self.assertEqual(priority, 3)
 
         self.queue.push("Kim", 2)
         key, priority = self.queue.peek()
-        self.assertEquals(key, "Kim")
-        self.assertEquals(priority, 2)
+        self.assertEqual(key, "Kim")
+        self.assertEqual(priority, 2)
 
         self.queue.update("Peter", 1)
         key, priority = self.queue.peek()
-        self.assertEquals(key, "Peter")
-        self.assertEquals(priority, 1)
+        self.assertEqual(key, "Peter")
+        self.assertEqual(priority, 1)
 
-        self.assertEquals(len(self.queue), 4)
+        self.assertEqual(len(self.queue), 4)
         key, priority = self.queue.delete("John")
-        self.assertEquals(key, "John")
-        self.assertEquals(priority, 7)
-        self.assertEquals(len(self.queue), 3)
+        self.assertEqual(key, "John")
+        self.assertEqual(priority, 7)
+        self.assertEqual(len(self.queue), 3)
 
         key, priority = self.queue.pop()
-        self.assertEquals(key, "Peter")
-        self.assertEquals(priority, 1)
+        self.assertEqual(key, "Peter")
+        self.assertEqual(priority, 1)
 
         key, priority = self.queue.peek()
-        self.assertEquals(key, "Kim")
-        self.assertEquals(priority, 2)
-        self.assertEquals(self.queue.index("Kim"), 0)
-        self.assertEquals(self.queue.key(0), "Kim")
-        self.assertEquals(self.queue.priority("Kim"), 2)
+        self.assertEqual(key, "Kim")
+        self.assertEqual(priority, 2)
+        self.assertEqual(self.queue.index("Kim"), 0)
+        self.assertEqual(self.queue.key(0), "Kim")
+        self.assertEqual(self.queue.priority("Kim"), 2)
 
         self.assertTrue(bool(self.queue))
 

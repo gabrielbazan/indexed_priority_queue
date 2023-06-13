@@ -17,14 +17,14 @@ This data structure has the following time complexities:
 | `update(key, new_priority)`    | Update the priority of a key                                                | O(log(n))       |
 | `index(key) -> int`            | Retrieve the index of the given key                                         | O(1)            |
 | `key(index: int)`              | Retrieve the key at the given index                                         | O(1)            |
-| `priority(key) -> Number`      | Retrieve the priority of the given key                                      | O(1)            |
+| `priority(key)`                | Retrieve the priority of the given key                                      | O(1)            |
 | `__bool__ -> bool`             | Determine if the queue is empty or not. Equivalent to _is_empty()_          | O(1)            |
 | `__len__ -> int`               | Returns the count of elements in the queue                                  | O(1)            |
 | `__contains(key)__ -> bool`    | Determine if the given key exists in the queue                              | O(1)            |
 
 Where:
 
-1. `key` is a `typing.Hashable`
+1. `key` is any `typing.Hashable` object
 2. `priority` is a `numbers.Number`
 3. `index` is an `int`
 

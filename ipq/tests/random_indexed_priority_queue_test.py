@@ -1,6 +1,7 @@
-from random import randrange, choice
-from operator import add, sub
 from collections import defaultdict
+from operator import add, sub
+from random import choice, randrange
+
 from ipq.indexed_priority_queue import IndexedPriorityQueue
 from ipq.tests.base_indexed_priority_queue_test_case import (
     BaseIndexedPriorityQueueTestCase,

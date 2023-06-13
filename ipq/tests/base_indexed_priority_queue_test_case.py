@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 from ipq.indexed_priority_queue import IndexedPriorityQueue
 
 

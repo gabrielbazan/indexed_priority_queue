@@ -19,4 +19,9 @@ class BaseIndexedPriorityQueueTestCase(TestCase):
 
     def assert_child_invariant(self, heap_size, root_index, child_index):
         if child_index < heap_size:
-            self.assertLessEqual(root_index, child_index)
+            root_value = self.queue.queue[root_index]
+            child_value = self.queue.queue[child_index]
+
+            print(root_value, child_value)
+
+            self.assertLessEqual(root_value, child_value)

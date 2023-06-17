@@ -22,6 +22,4 @@ class BaseIndexedPriorityQueueTestCase(TestCase):
             root_value = self.queue.queue[root_index]
             child_value = self.queue.queue[child_index]
 
-            print(root_value, child_value)
-
             self.assertLessEqual(root_value, child_value)
